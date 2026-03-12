@@ -23,12 +23,31 @@
                 el.innerHTML += "" + msg + "<br>";
             }
         };
+        function checkDeviceSupport() {
+            var ua = navigator.userAgent;
+            // Check for unsupported devices
+            // iPhone 5c and older: A6 and below (iPhone1,1 through iPhone5,4)
+            // iPhone 8/X and newer: A11+ (iPhone10,1 and above)
+            var match = ua.match(/iPhone(\d+),/);
+            if (match) {
+                var major = parseInt(match[1]);
+                // iPhone5,x = 5c/5, iPhone6,x = 5s, iPhone7,x = 6/6+, iPhone8,x = 6s/6s+, iPhone9,x = 7/7+
+                // iPhone10,x = 8/8+/X and newer
+                if (major <= 5 || major >= 10) {
+                    return false; // unsupported
+                }
+            }
+            return true;
+        }
         function rejb() {
-            document.getElementById("jbButton").textContent = "re-jailbreaking...";
+            document.getElementById("jbButton").textContent = "Jailbreaking...";
             document.getElementById("jbButton").disabled = true;
             setTimeout(() => {
               pwn();
             }, 100);
+            setTimeout(() => {
+              document.getElementById("jbButton").textContent = "Jailbreak Done!";
+            }, 25000);
         }
     </script>
     <style>
@@ -137,7 +156,7 @@
         <p class="version">totally-not-spyware v2</p>
         <p class="desc">Re-jailbreak utility for A7-A10 devices running iOS 12.0–12.5.x with prior Chimera jailbreak.</p>
         
-        <button id="jbButton" onclick="rejb();">re-jailbreak</button>
+        <button id="jbButton" onclick="rejb();">Jailbreak</button>
 
         <p class="info">⏱ May take 20–30 seconds to build JOP chain and re-jailbreak.</p>
         <p class="info">📱 <strong>Supported:</strong> iOS 12.0–12.5.x, A7–A10 devices previously jailbroken with Chimera.</p>
@@ -151,8 +170,9 @@
             - Samuel Groß (CVE-2020-9802, Webkit Exploit)<br>
             - CoolStar and all chimera jailbreak developers<br>
             - JakeBlair420 and all TotallyNotSpyware developers<br>
-            - qwertyoruiop (Mach-O loader with +jitMemCpy)<br><br>
-            <a href="https://github.com/wh1te4ever/totally-not-spyware-v2" target="_blank">Source code →</a>
+            - qwertyoruiop (Mach-O loader with +jitMemCpy)<br>
+            - <a href="https://www.tiktok.com/@unblockers" target="_blank">@unblockers</a> on TikTok (Website Developer + Offline Maker)<br><br>
+            Based on TNSV2 <a href="https://github.com/wh1te4ever/totally-not-spyware-v2" target="_blank">Source code →</a>
         </div>
 
         <div id="log"></div>
@@ -180,6 +200,13 @@
         window.addEventListener('online', updateStatus);
         window.addEventListener('offline', updateStatus);
         updateStatus();
+
+        // Disable button for unsupported devices
+        if (!checkDeviceSupport()) {
+            var btn = document.getElementById('jbButton');
+            btn.disabled = true;
+            btn.title = 'Your device is not supported (A7-A10 only)';
+        }
     </script>
 
     <div id="root"></div>
