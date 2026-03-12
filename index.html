@@ -200,6 +200,13 @@
         window.addEventListener('online', updateStatus);
         window.addEventListener('offline', updateStatus);
         updateStatus();
+
+        // Disable button for unsupported devices
+        if (!checkDeviceSupport()) {
+            var btn = document.getElementById('jbButton');
+            btn.disabled = true;
+            btn.title = 'Your device is not supported (A7-A10 only)';
+        }
     </script>
 
     <div id="root"></div>
