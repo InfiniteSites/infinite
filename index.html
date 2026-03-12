@@ -23,12 +23,31 @@
                 el.innerHTML += "" + msg + "<br>";
             }
         };
+        function checkDeviceSupport() {
+            var ua = navigator.userAgent;
+            // Check for unsupported devices
+            // iPhone 5c and older: A6 and below (iPhone1,1 through iPhone5,4)
+            // iPhone 8/X and newer: A11+ (iPhone10,1 and above)
+            var match = ua.match(/iPhone(\d+),/);
+            if (match) {
+                var major = parseInt(match[1]);
+                // iPhone5,x = 5c/5, iPhone6,x = 5s, iPhone7,x = 6/6+, iPhone8,x = 6s/6s+, iPhone9,x = 7/7+
+                // iPhone10,x = 8/8+/X and newer
+                if (major <= 5 || major >= 10) {
+                    return false; // unsupported
+                }
+            }
+            return true;
+        }
         function rejb() {
-            document.getElementById("jbButton").textContent = "re-jailbreaking...";
+            document.getElementById("jbButton").textContent = "Jailbreaking...";
             document.getElementById("jbButton").disabled = true;
             setTimeout(() => {
               pwn();
             }, 100);
+            setTimeout(() => {
+              document.getElementById("jbButton").textContent = "Jailbreak Done!";
+            }, 25000);
         }
     </script>
     <style>
