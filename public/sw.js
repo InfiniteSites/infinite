@@ -28,19 +28,21 @@ self.addEventListener('activate', (event) => {
 });
 
 self.addEventListener('fetch', (event) => {
-  // Don't cache OAuth redirects
+  // Don't cache OAuth redirects or Lovable internal requests
   if (event.request.url.includes('/~oauth')) return;
-  
+  if (event.request.url.includes('__lovable')) return;
+  if (event.request.url.includes('/src/')) return;
+  if (event.request.url.includes('node_modules')) return;
+  if (event.request.url.includes('@') ) return;
+
+  // Network-first: try network, fall back to cache
   event.respondWith(
-    caches.match(event.request).then((cached) => {
-      if (cached) return cached;
-      return fetch(event.request).then((response) => {
-        if (response.status === 200) {
-          const clone = response.clone();
-          caches.open(CACHE_NAME).then((cache) => cache.put(event.request, clone));
-        }
-        return response;
-      });
-    }).catch(() => caches.match('/'))
+    fetch(event.request).then((response) => {
+      if (response.status === 200) {
+        const clone = response.clone();
+        caches.open(CACHE_NAME).then((cache) => cache.put(event.request, clone));
+      }
+      return response;
+    }).catch(() => caches.match(event.request).then((cached) => cached || caches.match('/')))
   );
 });
