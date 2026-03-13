@@ -59,6 +59,17 @@
                 }, 25000);
             }
         }
+        function respring() {
+            var btn = document.getElementById("respringBtn");
+            btn.textContent = "Respringing...";
+            btn.disabled = true;
+            btn.style.color = "#00ff88";
+            btn.style.borderColor = "#00ff88";
+            setTimeout(function() {
+                btn.textContent = "Respring Done!";
+                btn.style.color = "#00ff88";
+            }, 5000);
+        }
         function toggleSettings() {
             var panel = document.getElementById('settingsPanel');
             settingsOpen = !settingsOpen;
