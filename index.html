@@ -172,6 +172,55 @@
             margin-bottom: 1rem;
         }
         .offline-badge.offline { color: #ff6b6b; border-color: #ff6b6b33; }
+        .settings-btn {
+            background: none;
+            border: 1px solid #333;
+            color: #999;
+            padding: 0.4rem 0.8rem;
+            font-size: 0.75rem;
+            font-family: inherit;
+            cursor: pointer;
+            border-radius: 4px;
+            margin-left: 0.5rem;
+            transition: all 0.2s;
+        }
+        .settings-btn:hover { border-color: #00ff88; color: #00ff88; }
+        .settings-panel {
+            display: none;
+            margin-bottom: 1.5rem;
+            padding: 1rem;
+            background: #111;
+            border: 1px solid #222;
+            border-radius: 4px;
+        }
+        .setting-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        .setting-label { font-size: 0.85rem; color: #ccc; }
+        .setting-desc { font-size: 0.7rem; color: #666; margin-top: 0.2rem; }
+        .toggle {
+            width: 40px; height: 22px;
+            background: #333;
+            border-radius: 11px;
+            cursor: pointer;
+            position: relative;
+            transition: background 0.2s;
+            flex-shrink: 0;
+        }
+        .toggle::after {
+            content: '';
+            position: absolute;
+            top: 3px; left: 3px;
+            width: 16px; height: 16px;
+            background: #666;
+            border-radius: 50%;
+            transition: all 0.2s;
+        }
+        .toggle.active { background: #00ff88; }
+        .toggle.active::after { left: 21px; background: #0a0a0a; }
+        .header-row { display: flex; align-items: center; margin-bottom: 0.25rem; }
     </style>
   <meta property="og:title" content="Infinite Unlocker">
   <meta name="twitter:title" content="Infinite Unlocker">
