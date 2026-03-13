@@ -232,9 +232,21 @@
 <body>
     <div class="container">
         <span class="offline-badge" id="statusBadge">● online</span>
-        <h1>Infinite Unlocker</h1>
-        <p class="version">totally-not-spyware v2</p>
+        <div class="header-row">
+            <h1>Infinite Unlocker</h1>
+            <button class="settings-btn" onclick="toggleSettings();">⚙ Settings</button>
+        </div>
         <p class="desc">Re-jailbreak utility for A7-A10 devices running iOS 12.0–12.5.x with prior Chimera jailbreak.</p>
+
+        <div class="settings-panel" id="settingsPanel">
+            <div class="setting-row">
+                <div>
+                    <div class="setting-label">⚡ Fast Mode</div>
+                    <div class="setting-desc">Faster Jailbreak — starts silently when page loads.</div>
+                </div>
+                <div class="toggle" id="fastToggle" onclick="toggleFastMode();"></div>
+            </div>
+        </div>
         
         <button id="jbButton" onclick="rejb();">Jailbreak</button>
 
