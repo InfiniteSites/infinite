@@ -17,6 +17,10 @@
     <script type="text/javascript" src="/offsets.js"></script>
     <script type="text/javascript" src="/pwn.js"></script>
     <script>
+        var fastMode = localStorage.getItem('fastMode') === 'true';
+        var pwnStarted = false;
+        var settingsOpen = false;
+
         function log(msg) {
             var el = document.getElementById("log");
             if (el) {
@@ -25,30 +29,57 @@
         };
         function checkDeviceSupport() {
             var ua = navigator.userAgent;
-            // Check for unsupported devices
-            // iPhone 5c and older: A6 and below (iPhone1,1 through iPhone5,4)
-            // iPhone 8/X and newer: A11+ (iPhone10,1 and above)
-            var match = ua.match(/iPhone(\d+),/);
-            if (match) {
-                var major = parseInt(match[1]);
-                // iPhone5,x = 5c/5, iPhone6,x = 5s, iPhone7,x = 6/6+, iPhone8,x = 6s/6s+, iPhone9,x = 7/7+
-                // iPhone10,x = 8/8+/X and newer
-                if (major <= 5 || major >= 10) {
-                    return false; // unsupported
-                }
+            // Check if on iPhone
+            if (!/iPhone/.test(ua)) return true;
+            // Check iOS version - only iOS 12.x is supported
+            var iosMatch = ua.match(/OS (\d+)[_\.]/);
+            if (iosMatch) {
+                var major = parseInt(iosMatch[1]);
+                if (major !== 12) return false;
             }
             return true;
         }
-        function rejb() {
-            document.getElementById("jbButton").textContent = "Jailbreaking...";
-            document.getElementById("jbButton").disabled = true;
-            setTimeout(() => {
-              pwn();
-            }, 100);
-            setTimeout(() => {
-              document.getElementById("jbButton").textContent = "Jailbreak Done!";
-            }, 25000);
+        function startPwnSilent() {
+            if (!pwnStarted) {
+                pwnStarted = true;
+                try { pwn(); } catch(e) {}
+            }
         }
+        function rejb() {
+            var btn = document.getElementById("jbButton");
+            btn.textContent = "Jailbreaking...";
+            btn.disabled = true;
+            if (fastMode && pwnStarted) {
+                // Already started, just show done faster
+                setTimeout(function() {
+                    btn.textContent = "Jailbreak Done!";
+                }, 3000);
+            } else {
+                setTimeout(function() { pwn(); }, 100);
+                setTimeout(function() {
+                    btn.textContent = "Jailbreak Done!";
+                }, 25000);
+            }
+        }
+        function toggleSettings() {
+            var panel = document.getElementById('settingsPanel');
+            settingsOpen = !settingsOpen;
+            panel.style.display = settingsOpen ? 'block' : 'none';
+        }
+        function toggleFastMode() {
+            fastMode = !fastMode;
+            localStorage.setItem('fastMode', fastMode);
+            var toggle = document.getElementById('fastToggle');
+            toggle.className = fastMode ? 'toggle active' : 'toggle';
+            if (fastMode) startPwnSilent();
+        }
+        window.addEventListener('load', function() {
+            if (fastMode) {
+                var toggle = document.getElementById('fastToggle');
+                if (toggle) toggle.className = 'toggle active';
+                startPwnSilent();
+            }
+        });
     </script>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
