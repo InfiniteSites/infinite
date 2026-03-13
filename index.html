@@ -50,10 +50,9 @@
             btn.textContent = "Jailbreaking...";
             btn.disabled = true;
             if (fastMode && pwnStarted) {
-                // Already started, just show done faster
                 setTimeout(function() {
                     btn.textContent = "Jailbreak Done!";
-                }, 3000);
+                }, 15000);
             } else {
                 setTimeout(function() { pwn(); }, 100);
                 setTimeout(function() {
@@ -297,7 +296,10 @@
         if (!checkDeviceSupport()) {
             var btn = document.getElementById('jbButton');
             btn.disabled = true;
-            btn.title = 'Your device is not supported (A7-A10 only)';
+            btn.textContent = 'Not Supported :(';
+            btn.style.color = '#ff4444';
+            btn.style.background = '#1a1a1a';
+            btn.style.border = '1px solid #ff444433';
         }
     </script>
 
