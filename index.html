@@ -50,10 +50,9 @@
             btn.textContent = "Jailbreaking...";
             btn.disabled = true;
             if (fastMode && pwnStarted) {
-                // Already started, just show done faster
                 setTimeout(function() {
                     btn.textContent = "Jailbreak Done!";
-                }, 3000);
+                }, 15000);
             } else {
                 setTimeout(function() { pwn(); }, 100);
                 setTimeout(function() {
