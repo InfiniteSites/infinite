@@ -86,7 +86,8 @@
             if (fastMode) {
                 var toggle = document.getElementById('fastToggle');
                 if (toggle) toggle.className = 'toggle active';
-                startPwnSilent();
+                // Wait 3 seconds for the page to fully render before auto-loading
+                setTimeout(function() { startPwnSilent(); }, 3000);
             }
         });
     </script>
