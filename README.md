@@ -1,5 +1,5 @@
 # Infinite Unlocker
-A semi untethered safari re-jailbreak tool for iOS 12-12.5.8
+A semi untethered safari vibecoded re-jailbreak tool for iOS 12-12.5.8
 Based on Totally Not Spyware v2
 
 # "Whats the difference?"
