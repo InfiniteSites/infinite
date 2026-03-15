@@ -12,9 +12,8 @@
 
 <link rel="manifest" href="manifest.json">
 
-<!-- auto generated JB icon -->
 <link rel="apple-touch-icon"
-href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' width='180' height='180'><rect width='100%' height='100%' fill='%23ff6a00'/><text x='50%' y='55%' font-size='90' text-anchor='middle' fill='white' font-family='Helvetica,Arial' font-weight='bold'>JB</text></svg>">
+href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' width='180' height='180'><rect width='100%' height='100%' fill='%23ff6a00'/><text x='50%' y='55%' font-size='90' text-anchor='middle' fill='white' font-family='Helvetica' font-weight='bold'>JB</text></svg>">
 
 <script src="utils.js"></script>
 <script src="int64.js"></script>
@@ -37,19 +36,25 @@ overflow:hidden;
 
 .header{
 position:absolute;
-top:35px;
+top:25px;
 width:100%;
 text-align:center;
 }
 
 .title{
-font-size:34px;
+font-size:36px;
 font-weight:700;
 }
 
 .subtitle{
 opacity:.85;
 margin-top:5px;
+}
+
+.status{
+font-size:13px;
+opacity:.8;
+margin-top:4px;
 }
 
 /* center */
@@ -61,8 +66,6 @@ align-items:center;
 justify-content:center;
 flex-direction:column;
 }
-
-/* jailbreak button */
 
 .circle{
 width:230px;
@@ -76,9 +79,11 @@ justify-content:center;
 font-size:30px;
 font-weight:700;
 cursor:pointer;
+
 box-shadow:
 0 0 40px rgba(255,255,255,0.7),
 0 0 90px rgba(255,255,255,0.5);
+
 transition:.3s;
 }
 
@@ -95,7 +100,7 @@ font-size:20px;
 
 .bottom{
 position:absolute;
-bottom:30px;
+bottom:25px;
 width:100%;
 text-align:center;
 }
@@ -111,7 +116,7 @@ cursor:pointer;
 font-weight:600;
 }
 
-/* popup */
+/* popup panels */
 
 .panel{
 position:fixed;
@@ -154,6 +159,8 @@ console.log(msg);
 
 var running=false;
 
+/* jailbreak */
+
 function jailbreak(){
 
 if(running) return;
@@ -183,18 +190,36 @@ prog.innerHTML="3/3";
 },16000);
 
 setTimeout(function(){
+
 btn.innerHTML="Jailbroken";
 prog.innerHTML="";
 
 setTimeout(function(){
+
 if(confirm("Want to open Sileo?")){
 window.location="sileo://";
 }
-},3000);
+
+},1500);
 
 },23000);
 
 }
+
+/* online status */
+
+function updateStatus(){
+var status=document.getElementById("status");
+if(navigator.onLine){
+status.innerHTML="Online";
+}else{
+status.innerHTML="Offline";
+}
+}
+
+window.addEventListener("online",updateStatus);
+window.addEventListener("offline",updateStatus);
+window.onload=updateStatus;
 
 /* panels */
 
@@ -217,8 +242,13 @@ document.getElementById(id).style.display="none";
 <body>
 
 <div class="header">
+
 <div class="title">Infinite Unlocker</div>
+
 <div class="subtitle">iOS 12 – 12.5.8</div>
+
+<div id="status" class="status"></div>
+
 </div>
 
 <div class="container">
@@ -238,22 +268,6 @@ Jailbreak
 
 </div>
 
-<!-- credits -->
-
-<div id="credits" class="panel">
-<div class="panelContent">
-
-<h3>Credits</h3>
-
-<p>Exploit: TotallyNotSpyware v2</p>
-<p>Fork: Infinite Unlocker</p>
-<p>Offline Developer: @unblockers</p>
-
-<div class="close" onclick="closePanel('credits')">X</div>
-
-</div>
-</div>
-
 <!-- settings -->
 
 <div id="settings" class="panel">
@@ -261,9 +275,45 @@ Jailbreak
 
 <h3>Settings</h3>
 
-<p>Fast Mode (coming soon)</p>
+<p>Fast Mode</p>
+<p style="font-size:13px;opacity:.7;">
+Very fast jailbreak. Starts automatically when the page loads.
+</p>
 
 <div class="close" onclick="closePanel('settings')">X</div>
+
+</div>
+</div>
+
+<!-- credits -->
+
+<div id="credits" class="panel">
+<div class="panelContent">
+
+<h3>Credits</h3>
+
+<p>
+wh1te4ever – main developer<br>
+alfiecg24 – kernel exploit<br>
+felix-pb – exploit research<br>
+Samuel Groß – WebKit exploit<br>
+CoolStar – Chimera jailbreak<br>
+JakeBlair420 – TotallyNotSpyware<br>
+qwertyoruiop – Mach-O loader<br>
+@unblockers – website developer
+</p>
+
+<br>
+
+<p><b>Forked off TNS v2</b></p>
+
+<br>
+
+<button onclick="window.open('https://github.com/wh1te4ever/totally-not-spyware-v2')">
+Source Code
+</button>
+
+<div class="close" onclick="closePanel('credits')">X</div>
 
 </div>
 </div>
