@@ -3,9 +3,9 @@ A semi untethered safari vibecoded re-jailbreak tool for iOS 12-12.5.8
 Based on Totally Not Spyware v2
 
 # "Whats the difference?"
-• iOS 12.5.5 Supported. 
+• iOS 12.5.8 Supported. 
 
-(Well, Im not too sure, but i tested it on a iPhone 5S Running iOS 12.5.5 and it worked perfectly.)
+(Well, Im not too sure, but i tested it on a iPhone 5S Running iOS 12.5.8 and it worked perfectly.)
 
 • Works 100% Offline, it is a modern website, working 100% with iOS 12, and it is offline. So basically no need for chimera now.
 
