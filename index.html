@@ -1,9 +1,16 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
 <title>Infinite Unlocker</title>
+
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Infinite Unlocker">
+<link rel="manifest" href="manifest.json">
 
 <script src="utils.js"></script>
 <script src="int64.js"></script>
@@ -16,91 +23,134 @@
 body{
 margin:0;
 font-family:-apple-system,Helvetica;
-background:#ff8c00;
+background:linear-gradient(180deg,#ff8a00,#ff5e00);
 height:100vh;
 display:flex;
 align-items:center;
 justify-content:center;
 color:white;
+overflow:hidden;
 }
 
 .container{
 text-align:center;
+animation:fadeIn 1.5s ease;
+}
+
+.title{
+font-size:34px;
+font-weight:700;
+margin-bottom:40px;
+letter-spacing:1px;
 }
 
 .circle{
-width:220px;
-height:220px;
+
+width:230px;
+height:230px;
+
 border-radius:50%;
+
 background:white;
-color:#ff8c00;
+
+color:#ff6a00;
+
 display:flex;
 align-items:center;
 justify-content:center;
-font-size:28px;
-font-weight:bold;
+
+font-size:30px;
+font-weight:700;
+
 cursor:pointer;
+
 margin:auto;
-box-shadow:0 10px 30px rgba(0,0,0,0.3);
-transition:0.2s;
+
+box-shadow:
+0 0 40px rgba(255,255,255,0.6),
+0 0 80px rgba(255,255,255,0.3);
+
+transition:all .2s;
+
 }
 
 .circle:active{
-transform:scale(0.95);
+transform:scale(.95);
 }
 
 .progress{
-margin-top:20px;
-font-size:18px;
+margin-top:25px;
+font-size:20px;
 }
 
-.bottom-buttons{
+.bottom{
+
 position:fixed;
-bottom:25px;
+bottom:30px;
+
 width:100%;
 display:flex;
 justify-content:space-around;
+
 }
 
 .btn{
-background:rgba(255,255,255,0.2);
+
+background:rgba(255,255,255,.25);
 border:none;
 color:white;
 padding:10px 20px;
-border-radius:12px;
+border-radius:14px;
 font-size:16px;
+backdrop-filter:blur(6px);
+
 }
 
 .popup{
+
 position:fixed;
 top:0;
 left:0;
+
 width:100%;
 height:100%;
-background:rgba(0,0,0,0.8);
+
+background:rgba(0,0,0,.75);
+
 display:none;
 align-items:center;
 justify-content:center;
+
+animation:fadeIn .4s;
+
 }
 
 .popup-content{
+
 background:#111;
 padding:25px;
-border-radius:14px;
+border-radius:16px;
 max-width:350px;
 color:white;
+position:relative;
+
 }
 
 .close{
+
 position:absolute;
-top:20px;
-right:25px;
-font-size:26px;
+top:10px;
+right:15px;
+font-size:24px;
 cursor:pointer;
+
 }
 
-.setting{
-margin:10px 0;
+@keyframes fadeIn{
+
+from{opacity:0;transform:translateY(20px);}
+to{opacity:1;transform:translateY(0);}
+
 }
 
 </style>
@@ -109,34 +159,78 @@ margin:10px 0;
 
 var running=false;
 
+/* jailbreak button */
+
 function jailbreak(){
 
 if(running) return;
 running=true;
 
-document.getElementById("circle").innerHTML="Starting";
-document.getElementById("progress").innerHTML="1/3";
+var circle=document.getElementById("circle");
+var progress=document.getElementById("progress");
 
-setTimeout(function(){
-document.getElementById("progress").innerHTML="2/3";
-},8000);
-
-setTimeout(function(){
-document.getElementById("progress").innerHTML="3/3";
-},16000);
-
-setTimeout(function(){
-
-document.getElementById("circle").innerHTML="Jailbroken";
-document.getElementById("progress").innerHTML="";
+/* run exploit instantly */
 
 try{
 pwn();
 }catch(e){}
 
+/* fake progress */
+
+circle.innerHTML="Running";
+
+progress.innerHTML="1/3";
+
+setTimeout(function(){
+progress.innerHTML="2/3";
+},8000);
+
+setTimeout(function(){
+progress.innerHTML="3/3";
+},16000);
+
+setTimeout(function(){
+
+circle.innerHTML="Jailbroken";
+progress.innerHTML="";
+
 },23000);
 
 }
+
+/* device detection */
+
+function isiOS12(){
+
+var ua=navigator.userAgent;
+
+var match=ua.match(/OS (\d+)_/);
+
+if(!match) return false;
+
+var version=parseInt(match[1]);
+
+return version===12;
+
+}
+
+window.onload=function(){
+
+if(!isiOS12()){
+
+var btn=document.getElementById("circle");
+
+btn.innerHTML="Not Supported";
+
+btn.style.opacity=".5";
+
+btn.onclick=null;
+
+}
+
+};
+
+/* popups */
 
 function openCredits(){
 document.getElementById("credits").style.display="flex";
@@ -159,6 +253,10 @@ document.getElementById("settings").style.display="none";
 
 <div class="container">
 
+<div class="title">
+Infinite Unlocker
+</div>
+
 <div id="circle" class="circle" onclick="jailbreak()">
 Jailbreak
 </div>
@@ -167,53 +265,53 @@ Jailbreak
 
 </div>
 
-<div class="bottom-buttons">
+<div class="bottom">
 
 <button class="btn" onclick="openSettings()">Settings</button>
+
 <button class="btn" onclick="openCredits()">Credits</button>
 
 </div>
 
-
 <div id="credits" class="popup">
 
-<div class="close" onclick="closePopup()">✕</div>
-
 <div class="popup-content">
+
+<div class="close" onclick="closePopup()">✕</div>
 
 <h3>Credits</h3>
 
 <p>
+
 wh1te4ever – main developer<br>
 alfiecg24 – kernel exploit<br>
 felix-pb – exploit research<br>
 Samuel Groß – WebKit exploit<br>
-CoolStar & devs – Chimera jailbreak<br>
+CoolStar – Chimera jailbreak<br>
 JakeBlair420 – TotallyNotSpyware<br>
 qwertyoruiop – Mach-O loader<br>
 @unblockers – website developer
+
 </p>
 
 </div>
 
 </div>
 
-
 <div id="settings" class="popup">
-
-<div class="close" onclick="closePopup()">✕</div>
 
 <div class="popup-content">
 
+<div class="close" onclick="closePopup()">✕</div>
+
 <h3>Settings</h3>
 
-<div class="setting">
-Fast Mode
-</div>
+<p>
 
-<div class="setting">
-Offline Mode Enabled
-</div>
+Fast Mode (coming soon)<br>
+Offline Support Enabled
+
+</p>
 
 </div>
 
