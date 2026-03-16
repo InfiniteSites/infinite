@@ -1,321 +1,41 @@
 <!DOCTYPE html>
+
 <html lang="en">
+
 <head>
 
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta charset="UTF-8">
 
-<title>Infinite Unlocker</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <title>Infinite Unlocker</title>
 
-<script src="/utils.js"></script>
-<script src="/int64.js"></script>
-<script src="/stages.js"></script>
-<script src="/offsets.js"></script>
-<script src="/pwn.js"></script>
+    <script type="text/javascript" src="utils.js"></script>
 
-<style>
+    <script type="text/javascript" src="int64.js"></script>
 
-body{
-margin:0;
-font-family:-apple-system,Helvetica;
-background:linear-gradient(180deg,#ff8a00,#ff5e00);
-height:100vh;
-color:white;
-display:flex;
-flex-direction:column;
-align-items:center;
-justify-content:center;
-opacity:0;
-animation:fadeIn 1s ease forwards;
-}
+    <script type="text/javascript" src="stages.js"></script>
 
-@keyframes fadeIn{
-from{opacity:0;transform:translateY(10px);}
-to{opacity:1;transform:translateY(0);}
-}
+    <script type="text/javascript" src="offsets.js"></script>
 
-.header{
-position:absolute;
-top:25px;
-text-align:center;
-}
+    <script type="text/javascript" src="pwn.js"></script>
 
-.title{
-font-size:34px;
-font-weight:700;
-}
+    <script>
 
-.subtitle{
-font-size:15px;
-opacity:.9;
-margin-top:4px;
-}
+        function log(msg) {};
 
-.status{
-font-size:13px;
-opacity:.8;
-margin-top:6px;
-}
+        function rejb() {
 
-.circle{
-width:230px;
-height:230px;
-border-radius:50%;
-background:white;
-color:#ff6a00;
-display:flex;
-align-items:center;
-justify-content:center;
-font-size:30px;
-font-weight:700;
-cursor:pointer;
-box-shadow:0 0 40px rgba(255,255,255,0.7),0 0 90px rgba(255,255,255,0.5);
-transition:.25s;
-}
+            document.getElementById("jbButton").textContent = "re-jailbreaking";
 
-.circle:active{
-transform:scale(.95);
-}
+            setTimeout(() => {
 
-.progress{
-margin-top:25px;
-font-size:20px;
-}
+              pwn();
 
-.bottom{
-position:absolute;
-bottom:25px;
-}
+            }, 100);
 
-.btn{
-margin:10px;
-padding:8px 18px;
-border-radius:20px;
-background:white;
-color:#ff6a00;
-display:inline-block;
-cursor:pointer;
-font-weight:600;
-}
+        }
 
-.panel{
-position:fixed;
-top:0;
-left:0;
-width:100%;
-height:100%;
-background:rgba(0,0,0,.7);
-display:none;
-align-items:center;
-justify-content:center;
-}
-
-.panelContent{
-background:white;
-color:black;
-padding:25px;
-border-radius:15px;
-width:80%;
-max-width:400px;
-text-align:center;
-}
-
-.toggle{
-width:40px;
-height:22px;
-background:#ccc;
-border-radius:11px;
-position:relative;
-cursor:pointer;
-margin-left:10px;
-display:inline-block;
-}
-
-.toggle::after{
-content:'';
-position:absolute;
-top:3px;
-left:3px;
-width:16px;
-height:16px;
-background:white;
-border-radius:50%;
-transition:.2s;
-}
-
-.toggle.active{
-background:#00ff88;
-}
-
-.toggle.active::after{
-left:21px;
-}
-
-.close{
-margin-top:15px;
-padding:6px 15px;
-background:#ff6a00;
-color:white;
-border-radius:15px;
-cursor:pointer;
-}
-
-</style>
-
-<script>
-
-var running=false
-var fastMode=false
-
-function updateStatus(){
-var s=document.getElementById("status")
-s.innerHTML=navigator.onLine?"Online":"Offline"
-}
-
-function rejb(){
-
-if(running) return
-running=true
-
-var btn=document.getElementById("circle")
-var prog=document.getElementById("progress")
-
-btn.innerHTML="Running"
-
-setTimeout(function(){
-try{
-pwn()
-}catch(e){
-console.log(e)
-}
-},100)
-
-prog.innerHTML="1/3"
-
-setTimeout(()=>{prog.innerHTML="2/3"},8000)
-setTimeout(()=>{prog.innerHTML="3/3"},16000)
-
-setTimeout(()=>{
-btn.innerHTML="Jailbroken"
-prog.innerHTML=""
-running=false
-},23000)
-
-}
-
-function toggleFast(){
-
-fastMode=!fastMode
-localStorage.setItem("fastMode",fastMode)
-
-document.getElementById("toggle").classList.toggle("active",fastMode)
-
-if(fastMode) rejb()
-
-}
-
-function openSettings(){
-document.getElementById("settings").style.display="flex"
-}
-
-function openCredits(){
-document.getElementById("credits").style.display="flex"
-}
-
-function closePanel(id){
-document.getElementById(id).style.display="none"
-}
-
-function openSource(){
-
-if(!navigator.onLine) return
-
-window.open("https://github.com/wh1te4ever/totally-not-spyware-v2")
-
-}
-
-window.onload=function(){
-
-updateStatus()
-
-window.addEventListener("online",updateStatus)
-window.addEventListener("offline",updateStatus)
-
-fastMode=localStorage.getItem("fastMode")==="true"
-
-if(fastMode){
-document.getElementById("toggle").classList.add("active")
-rejb()
-}
-
-}
-
-</script>
+    </script>
 
 </head>
-
-<body>
-
-<div class="header">
-<div class="title">Infinite Unlocker</div>
-<div class="subtitle">iOS 12 – 12.5.8 Supported</div>
-<div id="status" class="status"></div>
-</div>
-
-<div class="circle" onclick="rejb()" id="circle">Jailbreak</div>
-
-<div id="progress" class="progress"></div>
-
-<div class="bottom">
-<span class="btn" onclick="openSettings()">Settings</span>
-<span class="btn" onclick="openCredits()">Credits</span>
-</div>
-
-<div id="settings" class="panel">
-<div class="panelContent">
-
-<h3>Settings</h3>
-
-<div>
-Fast Mode
-<div id="toggle" class="toggle" onclick="toggleFast()"></div>
-</div>
-
-<p style="font-size:13px;opacity:.7;">
-Very fast jailbreak.
-</p>
-
-<div class="close" onclick="closePanel('settings')">Close</div>
-
-</div>
-</div>
-
-<div id="credits" class="panel">
-<div class="panelContent">
-
-<h3>Credits</h3>
-
-<p>
-wh1te4ever – main developer<br>
-alfiecg24 – kernel exploit<br>
-Samuel Groß – WebKit exploit<br>
-CoolStar – Chimera jailbreak<br>
-JakeBlair420 – TotallyNotSpyware<br>
-qwertyoruiop – Mach-O loader<br>
-@unblockers – Offline Developer & Website Developer
-</p>
-
-<p><b>Forked off TNS v2</b></p>
-
-<button onclick="openSource()">Source Code</button>
-
-<div class="close" onclick="closePanel('credits')">Close</div>
-
-</div>
-</div>
-
-</body>
-</html>
