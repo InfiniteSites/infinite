@@ -758,7 +758,7 @@ function pwn() {
 
 
     //6. We've done here, get code execution
-    alert("Jailbreak Made By Infinite (close)");
+    alert("Jailbreak Made By Infinite (close)"); // by tns team, but it means offline jailbreak made by infinite.
     log(`[Stage 6] Prepare code execution...`);
     
     // needed to bypass seperated RW, RX JIT mitigation
