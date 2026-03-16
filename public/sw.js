@@ -1,47 +1,40 @@
-const CACHE_NAME = 'infinite-unlocker-v1';
-const FILES_TO_CACHE = [
-  './',
-  './index.html',
-  './utils.js',
-  './int64.js',
-  './stages.js',
-  './offsets.js',
-  './pwn.js',
-  './manifest.json',
-  './favicon.ico'
-];
+const CACHE_NAME = "infinite-unlocker-v1";
 
-// Install event: cache all files
-self.addEventListener('install', (event) => {
-  event.waitUntil(
-    caches.open(CACHE_NAME)
-      .then(cache => cache.addAll(FILES_TO_CACHE))
-  );
+// install
+self.addEventListener("install", (event) => {
   self.skipWaiting();
 });
 
-// Activate event: remove old caches
-self.addEventListener('activate', (event) => {
+// activate
+self.addEventListener("activate", (event) => {
   event.waitUntil(
-    caches.keys().then(keys => 
-      Promise.all(keys.filter(key => key !== CACHE_NAME).map(key => caches.delete(key)))
+    caches.keys().then(keys =>
+      Promise.all(
+        keys.filter(k => k !== CACHE_NAME).map(k => caches.delete(k))
+      )
     )
   );
   self.clients.claim();
 });
 
-// Fetch event: network-first with cache fallback
-self.addEventListener('fetch', (event) => {
+// fetch
+self.addEventListener("fetch", (event) => {
+
+  if (event.request.method !== "GET") return;
+
   event.respondWith(
-    fetch(event.request)
-      .then(response => {
-        // Only cache successful GET requests
-        if (response.status === 200 && event.request.method === 'GET') {
-          const clone = response.clone();
-          caches.open(CACHE_NAME).then(cache => cache.put(event.request, clone));
-        }
-        return response;
-      })
-      .catch(() => caches.match(event.request).then(cached => cached || caches.match('./')))
+    caches.open(CACHE_NAME).then(cache =>
+      fetch(event.request)
+        .then(response => {
+          if (response && response.status === 200) {
+            cache.put(event.request, response.clone());
+          }
+          return response;
+        })
+        .catch(() =>
+          cache.match(event.request).then(res => res || cache.match("./"))
+        )
+    )
   );
+
 });
