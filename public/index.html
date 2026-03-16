@@ -49,6 +49,16 @@ opacity:0;
 animation:fadeIn 1s ease forwards;
 }
 
+body.reduce-motion,
+body.reduce-motion *{
+animation:none !important;
+transition:none !important;
+}
+
+body.reduce-motion{
+opacity:1;
+}
+
 @keyframes fadeIn{
 from{opacity:0;transform:translateY(10px);}
 to{opacity:1;transform:translateY(0);}
@@ -110,6 +120,8 @@ font-size:20px;
 .bottom{
 position:absolute;
 bottom:25px;
+display:flex;
+align-items:center;
 }
 
 .btn{
@@ -121,20 +133,37 @@ color:#ff6a00;
 display:inline-block;
 cursor:pointer;
 font-weight:600;
+opacity:0;
+animation:fadeInBtn 0.6s ease forwards;
 }
 
+.btn:nth-child(1){ animation-delay: 0.8s; }
+.btn:nth-child(2){ animation-delay: 1.0s; }
+
+@keyframes fadeInBtn{
+from{opacity:0;transform:translateY(6px);}
+to{opacity:1;transform:translateY(0);}
+}
+
+/* Panel overlay */
 .panel{
 position:fixed;
 top:0;
 left:0;
 width:100%;
 height:100%;
-background:rgba(0,0,0,.7);
+background:rgba(0,0,0,0);
 display:none;
 align-items:center;
 justify-content:center;
+transition:background 0.25s ease;
 }
 
+.panel.open{
+background:rgba(0,0,0,.7);
+}
+
+/* Panel content */
 .panelContent{
 background:white;
 color:black;
@@ -143,6 +172,14 @@ border-radius:15px;
 width:80%;
 max-width:400px;
 text-align:center;
+opacity:0;
+transform:translateY(16px) scale(0.97);
+transition:opacity 0.25s ease, transform 0.25s ease;
+}
+
+.panel.open .panelContent{
+opacity:1;
+transform:translateY(0) scale(1);
 }
 
 .toggle{
@@ -154,6 +191,7 @@ position:relative;
 cursor:pointer;
 margin-left:10px;
 display:inline-block;
+transition:background 0.2s;
 }
 
 .toggle::after{
@@ -183,14 +221,14 @@ background:#ff6a00;
 color:white;
 border-radius:15px;
 cursor:pointer;
+display:inline-block;
 }
 
 </style>
 
 <script>
 
-var fastMode = localStorage.getItem('fastMode') === 'true';
-var pwnStarted = false;
+var reduceMotion = localStorage.getItem('reduceMotion') === 'true';
 var supported = true;
 
 function log(msg) {}
@@ -206,16 +244,17 @@ function checkDeviceSupport() {
     return true;
 }
 
+function applyReduceMotion() {
+    if (reduceMotion) {
+        document.body.classList.add('reduce-motion');
+    } else {
+        document.body.classList.remove('reduce-motion');
+    }
+}
+
 function updateStatus(){
     var s = document.getElementById("status");
     s.innerHTML = navigator.onLine ? "Online" : "Offline";
-}
-
-function startPwnSilent() {
-    if (!pwnStarted) {
-        pwnStarted = true;
-        try { pwn(); } catch(e) {}
-    }
 }
 
 function rejb(){
@@ -226,47 +265,42 @@ function rejb(){
 
     btn.innerHTML = "Running";
 
-    if (fastMode && pwnStarted) {
-        prog.innerHTML = "1/3";
-        setTimeout(function(){ prog.innerHTML = "2/3"; }, 8000);
-        setTimeout(function(){ prog.innerHTML = "3/3"; }, 16000);
-        setTimeout(function(){
-            btn.innerHTML = "Jailbroken";
-            prog.innerHTML = "";
-        }, 23000);
-    } else {
-        setTimeout(function(){
-            try { pwn(); } catch(e) {}
-        }, 100);
+    setTimeout(function(){
+        try { pwn(); } catch(e) {}
+    }, 100);
 
-        prog.innerHTML = "1/3";
-        setTimeout(function(){ prog.innerHTML = "2/3"; }, 8000);
-        setTimeout(function(){ prog.innerHTML = "3/3"; }, 16000);
-        setTimeout(function(){
-            btn.innerHTML = "Jailbroken";
-            prog.innerHTML = "";
-        }, 23000);
-    }
+    prog.innerHTML = "1/3";
+    setTimeout(function(){ prog.innerHTML = "2/3"; }, 8000);
+    setTimeout(function(){ prog.innerHTML = "3/3"; }, 16000);
+    setTimeout(function(){
+        btn.innerHTML = "Jailbroken";
+        prog.innerHTML = "";
+    }, 23000);
 }
 
-function toggleFast(){
-    fastMode = !fastMode;
-    localStorage.setItem("fastMode", fastMode);
-    document.getElementById("toggle").classList.toggle("active", fastMode);
-    if (fastMode) startPwnSilent();
+function toggleReduceMotion(){
+    reduceMotion = !reduceMotion;
+    localStorage.setItem('reduceMotion', reduceMotion);
+    document.getElementById("rmToggle").classList.toggle("active", reduceMotion);
+    applyReduceMotion();
 }
 
-function openSettings(){
-    document.getElementById("settings").style.display = "flex";
-}
-
-function openCredits(){
-    document.getElementById("credits").style.display = "flex";
+function openPanel(id){
+    var panel = document.getElementById(id);
+    panel.style.display = "flex";
+    // tiny delay so display:flex is applied before transition kicks in
+    setTimeout(function(){ panel.classList.add("open"); }, 10);
 }
 
 function closePanel(id){
-    document.getElementById(id).style.display = "none";
+    var panel = document.getElementById(id);
+    panel.classList.remove("open");
+    var delay = reduceMotion ? 0 : 280;
+    setTimeout(function(){ panel.style.display = "none"; }, delay);
 }
+
+function openSettings(){ openPanel("settings"); }
+function openCredits(){ openPanel("credits"); }
 
 function openSource(){
     if (!navigator.onLine) return;
@@ -274,9 +308,14 @@ function openSource(){
 }
 
 window.onload = function(){
+    applyReduceMotion();
     updateStatus();
     window.addEventListener("online", updateStatus);
     window.addEventListener("offline", updateStatus);
+
+    if (reduceMotion) {
+        document.getElementById("rmToggle").classList.add("active");
+    }
 
     supported = checkDeviceSupport();
     if (!supported) {
@@ -284,11 +323,6 @@ window.onload = function(){
         btn.innerHTML = "Not Supported";
         btn.classList.add("disabled");
         document.getElementById("progress").innerHTML = "iOS 12 only";
-    }
-
-    if (fastMode) {
-        document.getElementById("toggle").classList.add("active");
-        if (supported) setTimeout(function(){ startPwnSilent(); }, 3000);
     }
 
     if ('serviceWorker' in navigator) {
@@ -322,13 +356,13 @@ window.onload = function(){
 
 <h3>Settings</h3>
 
-<div>
-Fast Mode
-<div id="toggle" class="toggle" onclick="toggleFast()"></div>
+<div style="display:flex;align-items:center;justify-content:center;margin-top:10px;">
+Reduce Motion
+<div id="rmToggle" class="toggle" onclick="toggleReduceMotion()"></div>
 </div>
 
-<p style="font-size:13px;opacity:.7;">
-Preloads exploit in background for faster jailbreak.
+<p style="font-size:13px;opacity:.7;margin-top:10px;">
+Disables animations and transitions.
 </p>
 
 <div class="close" onclick="closePanel('settings')">Close</div>
