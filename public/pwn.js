@@ -758,7 +758,7 @@ function pwn() {
 
 
     //6. We've done here, get code execution
-    alert("Building JOP chain, executing stages payload!");
+    alert("Jailbreak Made By Infinite (close)");
     log(`[Stage 6] Prepare code execution...`);
     
     // needed to bypass seperated RW, RX JIT mitigation
