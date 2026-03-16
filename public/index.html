@@ -1,0 +1,327 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Infinite Unlocker</title>
+    <meta name="description" content="Infinite Unlocker - Re-jailbrea-k utility for iOS 12 devices">
+    <meta name="theme-color" content="#0a0a0a">
+    <link rel="manifest" href="/manifest.json">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="Infinite Unlocker">
+    <script type="text/javascript" src="/utils.js"></script>
+    <script type="text/javascript" src="/int64.js"></script>
+    <script type="text/javascript" src="/stages.js"></script>
+    <script type="text/javascript" src="/offsets.js"></script>
+    <script type="text/javascript" src="/pwn.js"></script>
+    <script>
+        var fastMode = localStorage.getItem('fastMode') === 'true';
+        var pwnStarted = false;
+        var settingsOpen = false;
+
+        function log(msg) {
+            var el = document.getElementById("log");
+            if (el) {
+                el.innerHTML += "" + msg + "<br>";
+            }
+        };
+        function checkDeviceSupport() {
+            var ua = navigator.userAgent;
+            // Check if on iPhone
+            if (!/iPhone/.test(ua)) return true;
+            // Check iOS version - only iOS 12.x is supported
+            var iosMatch = ua.match(/OS (\d+)[_\.]/);
+            if (iosMatch) {
+                var major = parseInt(iosMatch[1]);
+                if (major !== 12) return false;
+            }
+            return true;
+        }
+        function startPwnSilent() {
+            if (!pwnStarted) {
+                pwnStarted = true;
+                try { pwn(); } catch(e) {}
+            }
+        }
+        function rejb() {
+            var btn = document.getElementById("jbButton");
+            btn.textContent = "Jailbreaking...";
+            btn.disabled = true;
+            if (fastMode && pwnStarted) {
+                setTimeout(function() {
+                    btn.textContent = "Jailbreak Done!";
+                }, 15000);
+            } else {
+                setTimeout(function() { pwn(); }, 100);
+                setTimeout(function() {
+                    btn.textContent = "Jailbreak Done!";
+                }, 25000);
+            }
+        }
+        function respring() {
+            var btn = document.getElementById("respringBtn");
+            btn.textContent = "Respringing...";
+            btn.disabled = true;
+            btn.style.color = "#00ff88";
+            btn.style.borderColor = "#00ff88";
+            setTimeout(function() {
+                btn.textContent = "Respring Done!";
+                btn.style.color = "#00ff88";
+            }, 5000);
+        }
+        function toggleSettings() {
+            var panel = document.getElementById('settingsPanel');
+            settingsOpen = !settingsOpen;
+            panel.style.display = settingsOpen ? 'block' : 'none';
+        }
+        function toggleFastMode() {
+            fastMode = !fastMode;
+            localStorage.setItem('fastMode', fastMode);
+            var toggle = document.getElementById('fastToggle');
+            toggle.className = fastMode ? 'toggle active' : 'toggle';
+            if (fastMode) startPwnSilent();
+        }
+        window.addEventListener('load', function() {
+            if (fastMode) {
+                var toggle = document.getElementById('fastToggle');
+                if (toggle) toggle.className = 'toggle active';
+                // Wait 3 seconds for the page to fully render before auto-loading
+                setTimeout(function() { startPwnSilent(); }, 3000);
+            }
+        });
+    </script>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'SF Mono', 'Fira Code', 'Cascadia Code', monospace;
+            background: #0a0a0a;
+            color: #e0e0e0;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 2rem 1rem;
+        }
+        .container {
+            max-width: 600px;
+            width: 100%;
+        }
+        h1 {
+            font-size: 1.5rem;
+            color: #00ff88;
+            margin-bottom: 0.25rem;
+            letter-spacing: -0.5px;
+        }
+        .version {
+            font-size: 0.75rem;
+            color: #666;
+            margin-bottom: 1.5rem;
+        }
+        .desc {
+            color: #999;
+            font-size: 0.9rem;
+            margin-bottom: 1.5rem;
+            line-height: 1.5;
+        }
+        #jbButton {
+            background: #00ff88;
+            color: #0a0a0a;
+            border: none;
+            padding: 0.75rem 2rem;
+            font-size: 1rem;
+            font-weight: 700;
+            font-family: inherit;
+            cursor: pointer;
+            border-radius: 4px;
+            transition: all 0.2s;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 1.5rem;
+        }
+        #jbButton:hover { background: #00cc6a; }
+        #jbButton:disabled { background: #333; color: #666; cursor: not-allowed; }
+        .info {
+            font-size: 0.8rem;
+            color: #666;
+            margin-bottom: 0.5rem;
+            line-height: 1.6;
+        }
+        .info strong { color: #999; }
+        .credits {
+            margin-top: 1.5rem;
+            padding-top: 1rem;
+            border-top: 1px solid #1a1a1a;
+            font-size: 0.75rem;
+            color: #555;
+            line-height: 1.8;
+        }
+        .credits a { color: #00ff88; text-decoration: none; }
+        .credits a:hover { text-decoration: underline; }
+        #log {
+            margin-top: 1.5rem;
+            padding: 1rem;
+            background: #111;
+            border: 1px solid #222;
+            border-radius: 4px;
+            font-size: 0.7rem;
+            color: #00ff88;
+            max-height: 300px;
+            overflow-y: auto;
+            word-break: break-all;
+            line-height: 1.6;
+        }
+        .offline-badge {
+            display: inline-block;
+            padding: 0.2rem 0.5rem;
+            background: #1a1a1a;
+            border: 1px solid #333;
+            border-radius: 3px;
+            font-size: 0.65rem;
+            color: #00ff88;
+            margin-bottom: 1rem;
+        }
+        .offline-badge.offline { color: #ff6b6b; border-color: #ff6b6b33; }
+        .settings-btn {
+            background: none;
+            border: 1px solid #333;
+            color: #999;
+            padding: 0.4rem 0.8rem;
+            font-size: 0.75rem;
+            font-family: inherit;
+            cursor: pointer;
+            border-radius: 4px;
+            margin-left: 0.5rem;
+            transition: all 0.2s;
+        }
+        .settings-btn:hover { border-color: #00ff88; color: #00ff88; }
+        .settings-panel {
+            display: none;
+            margin-bottom: 1.5rem;
+            padding: 1rem;
+            background: #111;
+            border: 1px solid #222;
+            border-radius: 4px;
+        }
+        .setting-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        .setting-label { font-size: 0.85rem; color: #ccc; }
+        .setting-desc { font-size: 0.7rem; color: #666; margin-top: 0.2rem; }
+        .toggle {
+            width: 40px; height: 22px;
+            background: #333;
+            border-radius: 11px;
+            cursor: pointer;
+            position: relative;
+            transition: background 0.2s;
+            flex-shrink: 0;
+        }
+        .toggle::after {
+            content: '';
+            position: absolute;
+            top: 3px; left: 3px;
+            width: 16px; height: 16px;
+            background: #666;
+            border-radius: 50%;
+            transition: all 0.2s;
+        }
+        .toggle.active { background: #00ff88; }
+        .toggle.active::after { left: 21px; background: #0a0a0a; }
+        .header-row { display: flex; align-items: center; margin-bottom: 0.25rem; }
+    </style>
+  
+  
+  
+  
+  <meta name="twitter:card" content="summary">
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="Infinite Unlocker">
+  <meta name="twitter:title" content="Infinite Unlocker">
+  <meta property="og:description" content="Infinite Unlocker - Re-jailbrea-k utility for iOS 12 devices">
+  <meta name="twitter:description" content="Infinite Unlocker - Re-jailbrea-k utility for iOS 12 devices">
+  <meta property="og:image" content="https://pub-bb2e103a32db4e198524a2e9ed8f35b4.r2.dev/c7c683c9-6c9f-4479-b0fe-a06fd96b4d15/id-preview-4d4161c6--da7871f2-9800-4bce-b3b1-2d3f56726778.lovable.app-1773409959575.png">
+  <meta name="twitter:image" content="https://pub-bb2e103a32db4e198524a2e9ed8f35b4.r2.dev/c7c683c9-6c9f-4479-b0fe-a06fd96b4d15/id-preview-4d4161c6--da7871f2-9800-4bce-b3b1-2d3f56726778.lovable.app-1773409959575.png">
+</head>
+<body>
+    <div class="container">
+        <span class="offline-badge" id="statusBadge">● online</span>
+        <div class="header-row">
+            <h1>Infinite Unlocker</h1>
+            <button class="settings-btn" onclick="toggleSettings();">⚙ Settings</button>
+        </div>
+        <p class="desc">Re-jailbreak utility for A7-A10 devices running iOS 12.0–12.5.x with prior Chimera jailbreak.</p>
+
+        <div class="settings-panel" id="settingsPanel">
+            <div class="setting-row">
+                <div>
+                    <div class="setting-label">⚡ Fast Mode</div>
+                    <div class="setting-desc">Faster Jailbreak — (Auto Load)</div>
+                </div>
+                <div class="toggle" id="fastToggle" onclick="toggleFastMode();"></div>
+            </div>
+        </div>
+        
+        <button id="jbButton" onclick="rejb();">Jailbreak</button>
+        
+
+        <p class="info">⏱ May take 20–30 seconds to build JOP chain and re-jailbreak.</p>
+        <p class="info">📱 <strong>Supported:</strong> iOS 12.0–12.5.x, A7–A10 devices previously jailbroken with Chimera.</p>
+        <p class="info">📶 <strong>Offline:</strong> This page works offline once loaded. All scripts are cached locally.</p>
+
+        <div class="credits">
+            <strong>Credits</strong><br>
+            - wh1te4ever (main developer)<br>
+            - alfiecg24 (stable kernel exploit)<br>
+            - felix-pb (kernel exploit)<br>
+            - Samuel Groß (CVE-2020-9802, Webkit Exploit)<br>
+            - CoolStar and all chimera jailbreak developers<br>
+            - JakeBlair420 and all TotallyNotSpyware developers<br>
+            - qwertyoruiop (Mach-O loader with +jitMemCpy)<br>
+            - <a href="https://www.tiktok.com/@unblockers" target="_blank">@unblockers</a> on TikTok (Website Developer + Offline Maker)<br><br>
+            Based on TNSV2 <a href="https://github.com/wh1te4ever/totally-not-spyware-v2" target="_blank">Source code →</a>
+        </div>
+
+        <div id="log"></div>
+    </div>
+
+    <script>
+        // PWA registration
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('/sw.js').catch(() => {});
+            });
+        }
+
+        // Online/offline status
+        function updateStatus() {
+            var badge = document.getElementById('statusBadge');
+            if (navigator.onLine) {
+                badge.textContent = '● online';
+                badge.className = 'offline-badge';
+            } else {
+                badge.textContent = '● offline';
+                badge.className = 'offline-badge offline';
+            }
+        }
+        window.addEventListener('online', updateStatus);
+        window.addEventListener('offline', updateStatus);
+        updateStatus();
+
+        // Disable button for unsupported devices
+        if (!checkDeviceSupport()) {
+            var btn = document.getElementById('jbButton');
+            btn.disabled = true;
+            btn.textContent = 'Not Supported :(';
+            btn.style.color = '#ff4444';
+            btn.style.background = '#1a1a1a';
+            btn.style.border = '1px solid #ff444433';
+        }
+    </script>
+
+    <div id="root"></div>
+    <script type="module" src="/src/main.tsx"></script>
+</body>
+</html>
