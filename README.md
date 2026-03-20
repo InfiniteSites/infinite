@@ -54,7 +54,7 @@ With the Coruna exploit, potential additions include:
 
 - iOS 13 – 17.2.1 support (all chips)
 
-Additionally, iOS 10 32‑bit jailbreaks already exist, so adding support for those devices may also be considered.
+Additionally, iOS 10 64-bit jailbreaks already exist, so adding support for those devices may also be considered.
 
 ---
 
